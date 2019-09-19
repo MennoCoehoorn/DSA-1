@@ -30,10 +30,10 @@ chunk* find_free_chunk(unsigned int size){
 void defrag(chunk *first){
     
     chunk *mover=first;
-    chunk *place_holder;
-    chunk *allocated_first;
-    chunk *allocated;
-    chunk *free_chunk;
+    chunk *allocated_first=NULL;
+    chunk *allocated=NULL;
+    chunk *free_chunk=NULL;
+    free_chunk->free=true;
     
     unsigned int free_space;
     
@@ -68,8 +68,19 @@ void defrag(chunk *first){
     
 }
 
+void *split_chunk(chunk *chunk_to_split,unsigned int size){
+    
+    chunk *new_chunk;
+    new_chunk->prev=chunk_to_split;
+    new_chunk->next=NULL;
+    new_chunk->chunk_size=chunk_to_split->chunk_size-size;
+    chunk_to_split->chunk_size=size;
+    
+}
 
 void *memory_alloc(unsigned int size){
+    
+    defrag(first);
     
     unsigned int needed_size = (((bytes-1)>>2)<<2) + 4;
     
@@ -90,6 +101,11 @@ void *memory_alloc(unsigned int size){
         chunk_to_alloc->next=NULL;
         chunk_to_alloc->free=false;
         
+    }else{
+        if(chunk_to_alloc->chunk_size>needed_size){
+            split_chunk(chunk_to_alloc,needed_size);
+        }
+        chunk_to_alloc->free=false;
     }
     
 }
