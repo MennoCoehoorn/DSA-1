@@ -15,3 +15,16 @@ typedef struct sesh{
     
 }sesh;
 
+chunk* find_free_chunk(unsigned int size, sesh session){
+    
+    chunk *mover=session->first_free_chunk;
+    
+    while(mover!=NULL){
+        if(mover->chunk_size>=size){
+            return mover;
+            break;
+        }
+    }
+    return NULL;
+    
+}
