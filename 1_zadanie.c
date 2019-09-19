@@ -1,30 +1,60 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 typedef struct chunk{
     
     unsigned int chunk_size;
-    struct chunk *next, *prev, *nex_free, *prev_free;
+    struct chunk *next, *prev;
     bool free;
     
 }chunk;
 
-typedef struct sesh{
+chunk* find_free_chunk(unsigned int size){
     
-    chunk *first_chunk,*last_chunk,*first_free_chunk,*last_free_chunk;
-    unsigned int alloc_cnt;
-    
-}sesh;
-
-chunk* find_free_chunk(unsigned int size, sesh session){
-    
-    chunk *mover=session->first_free_chunk;
+    chunk mover = first;
     
     while(mover!=NULL){
-        if(mover->chunk_size>=size){
+        
+        if(mover->chunk_size>=size&&mover->free){
             return mover;
             break;
         }
+        
+        mover=mover->next;
     }
+    
     return NULL;
+    
+}
+
+
+void *memory_alloc(unsigned int size){
+    
+    unsigned int needed_size = (((bytes-1)>>2)<<2) + 4;
+    
+    chunk *chunk_to_alloc =find_free_chunk(needed_size);
+    
+    if(chunk_to_alloc==NULL){
+        
+        chunk_to_alloc = chunk *new_chunk;
+        
+        chunk *mover=first;
+        
+        while(mover->next!=NULL){
+            mover=mover->next;
+        }
+        
+        mover->next=chunk_to_alloc;
+        chunk_to_alloc->prev=mover;
+        chunk_to_alloc->next=NULL;
+        chunk_to_alloc->free=false;
+        
+    }
+    
+}
+
+chunk *first;
+
+void main(){
     
 }
